@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-const GameCanvas = dynamic(() => import("@/components/GameCanvas"), {
+const GameCanvas = dynamic(() => import("@/src/components/GameCanvas"), {
   ssr: false,
   loading: () => (
     <main className="flex min-h-screen items-center justify-center bg-[#171717] text-white">

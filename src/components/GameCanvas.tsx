@@ -254,6 +254,7 @@ export default function GameCanvas() {
           default: "arcade",
           arcade: {
             gravity: {
+              x: 0,
               y: 900,
             },
             debug: false,
