@@ -1,65 +1,83 @@
-import Image from "next/image";
+const links = [
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/lucasdiassiqueira/",
+  },
+  {
+    label: "GitHub",
+    href: "https://github.com/lucasmorada",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/diaswzj",
+  },
+  {
+    label: "WhatsApp",
+    href: "https://wa.me/5541999016634",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-[#f3ead8] text-[#171717]">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-6 py-10">
+        <div className="max-w-3xl">
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.35em] text-[#5f6f45]">
+            Portfólio interativo 2D
+          </p>
+
+          <h1 className="mb-6 text-5xl font-black leading-tight tracking-tight text-[#1f1f1f] md:text-7xl">
+            Portfólio Lucas Dias
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mb-8 max-w-2xl text-lg leading-8 text-[#3f3f3f]">
+            Um portfólio em formato de jogo 2D side-scroller, com estética
+            retrô, pixel art original e uma jornada interativa mostrando
+            projetos, stacks, skills e contatos.
+          </p>
+
+          <div className="mb-10 flex flex-wrap gap-3">
+            <span className="rounded-full bg-[#1f1f1f] px-4 py-2 text-sm font-semibold text-white">
+              Next.js
+            </span>
+            <span className="rounded-full bg-[#6f4e37] px-4 py-2 text-sm font-semibold text-white">
+              TypeScript
+            </span>
+            <span className="rounded-full bg-[#5f6f45] px-4 py-2 text-sm font-semibold text-white">
+              Tailwind CSS
+            </span>
+            <span className="rounded-full bg-[#3d4f66] px-4 py-2 text-sm font-semibold text-white">
+              Phaser 3
+            </span>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            {links.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl border-2 border-[#171717] bg-white px-5 py-3 text-sm font-bold text-[#171717] shadow-[4px_4px_0px_#171717] transition hover:-translate-y-1 hover:shadow-[6px_6px_0px_#171717]"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-16 rounded-2xl border-2 border-[#171717] bg-[#d8c7a5] p-6 shadow-[8px_8px_0px_#171717]">
+          <h2 className="mb-3 text-2xl font-black">
+            Status da jornada
+          </h2>
+
+          <p className="text-base leading-7 text-[#303030]">
+            Etapa 1 funcionando. O projeto base foi criado com Next.js,
+            TypeScript, Tailwind CSS e Phaser instalado. O próximo passo será
+            renderizar o Phaser dentro desta página sem quebrar o SSR do Next.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
