@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type PhaserType from "phaser";
+import StartOverlay from "@/src/components/StartOverlay";
+import { GAME_EVENTS } from "@/src/game/events";
 
 export default function GameCanvas() {
   const gameContainerRef = useRef<HTMLDivElement | null>(null);
+  const [showStartOverlay, setShowStartOverlay] = useState(true);
 
   useEffect(() => {
     let game: PhaserType.Game | null = null;
@@ -35,10 +38,19 @@ export default function GameCanvas() {
     };
   }, []);
 
+  function handleStartGame() {
+    window.dispatchEvent(new Event(GAME_EVENTS.START_GAME));
+    setShowStartOverlay(false);
+  }
+
   return (
-    <div
-      ref={gameContainerRef}
-      className="h-screen w-screen overflow-hidden bg-[#171717]"
-    />
+    <div className="relative h-screen w-screen overflow-hidden bg-[#171717]">
+      <div
+        ref={gameContainerRef}
+        className="h-screen w-screen overflow-hidden bg-[#171717]"
+      />
+
+      {showStartOverlay && <StartOverlay onStart={handleStartGame} />}
+    </div>
   );
 }

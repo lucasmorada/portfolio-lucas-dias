@@ -1,4 +1,5 @@
 import type PhaserType from "phaser";
+import { GAME_EVENTS } from "@/src/game/events";
 import { createPixelTextures } from "@/src/game/utils/createTextures";
 
 export function createGameScene(Phaser: typeof import("phaser")) {
@@ -7,6 +8,8 @@ export function createGameScene(Phaser: typeof import("phaser")) {
     private platforms?: PhaserType.Physics.Arcade.StaticGroup;
     private cursors?: PhaserType.Types.Input.Keyboard.CursorKeys;
     private keys?: Record<string, PhaserType.Input.Keyboard.Key>;
+    private isGameStarted = false;
+    private startGameHandler?: () => void;
 
     private readonly worldWidth = 3600;
     private readonly worldHeight = 720;
@@ -22,10 +25,16 @@ export function createGameScene(Phaser: typeof import("phaser")) {
       this.createPlayer();
       this.createControls();
       this.configureCamera();
+      this.listenToReactEvents();
     }
 
     update() {
       if (!this.player || !this.cursors || !this.keys) {
+        return;
+      }
+
+      if (!this.isGameStarted) {
+        this.player.setVelocityX(0);
         return;
       }
 
@@ -60,6 +69,31 @@ export function createGameScene(Phaser: typeof import("phaser")) {
       if (wantsToJump && isTouchingGround) {
         this.player.setVelocityY(-520);
       }
+    }
+
+    private listenToReactEvents() {
+      this.startGameHandler = () => {
+        this.isGameStarted = true;
+      };
+
+      window.addEventListener(GAME_EVENTS.START_GAME, this.startGameHandler);
+
+      this.events.once("shutdown", () => {
+        this.removeReactEvents();
+      });
+
+      this.events.once("destroy", () => {
+        this.removeReactEvents();
+      });
+    }
+
+    private removeReactEvents() {
+      if (!this.startGameHandler) {
+        return;
+      }
+
+      window.removeEventListener(GAME_EVENTS.START_GAME, this.startGameHandler);
+      this.startGameHandler = undefined;
     }
 
     private createWorld() {
@@ -138,7 +172,7 @@ export function createGameScene(Phaser: typeof import("phaser")) {
         .setScrollFactor(1);
 
       this.add
-        .text(112, 132, "Etapa 5: mundo side-scroller", {
+        .text(112, 132, "Etapa 6: overlay inicial", {
           fontFamily: "monospace",
           fontSize: "18px",
           color: "#171717",
@@ -146,11 +180,16 @@ export function createGameScene(Phaser: typeof import("phaser")) {
         .setScrollFactor(1);
 
       this.add
-        .text(112, 165, "A/D ou setas: andar | Shift: correr | Espaço/W: pular", {
-          fontFamily: "monospace",
-          fontSize: "16px",
-          color: "#171717",
-        })
+        .text(
+          112,
+          165,
+          "Clique em Iniciar Jornada para liberar os controles",
+          {
+            fontFamily: "monospace",
+            fontSize: "16px",
+            color: "#171717",
+          }
+        )
         .setScrollFactor(1);
     }
 
@@ -218,7 +257,9 @@ export function createGameScene(Phaser: typeof import("phaser")) {
       ];
 
       signPositions.forEach((sign) => {
-        this.add.image(sign.x, screenHeight - 102, "wood-sign").setOrigin(0.5, 1);
+        this.add
+          .image(sign.x, screenHeight - 102, "wood-sign")
+          .setOrigin(0.5, 1);
 
         this.add
           .text(sign.x, screenHeight - 177, sign.title, {
