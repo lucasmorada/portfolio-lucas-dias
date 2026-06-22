@@ -4,6 +4,9 @@ export function createPixelTextures(scene: PhaserType.Scene) {
   createPlayerTexture(scene);
   createGroundTexture(scene);
   createPlatformTexture(scene);
+  createCloudTexture(scene);
+  createMountainTexture(scene);
+  createWoodSignTexture(scene);
 }
 
 function createPlayerTexture(scene: PhaserType.Scene) {
@@ -67,4 +70,56 @@ function createPlatformTexture(scene: PhaserType.Scene) {
 
   platformGraphics.generateTexture("stone-platform", 32, 16);
   platformGraphics.destroy();
+}
+
+function createCloudTexture(scene: PhaserType.Scene) {
+  const cloudGraphics = scene.make.graphics({ x: 0, y: 0 }, false);
+
+  cloudGraphics.fillStyle(0xf3ead8);
+  cloudGraphics.fillRect(8, 16, 64, 16);
+  cloudGraphics.fillRect(20, 8, 36, 16);
+  cloudGraphics.fillRect(34, 0, 28, 16);
+
+  cloudGraphics.fillStyle(0xd8c7a5);
+  cloudGraphics.fillRect(8, 28, 64, 4);
+
+  cloudGraphics.generateTexture("pixel-cloud", 80, 40);
+  cloudGraphics.destroy();
+}
+
+function createMountainTexture(scene: PhaserType.Scene) {
+  const mountainGraphics = scene.make.graphics({ x: 0, y: 0 }, false);
+
+  mountainGraphics.fillStyle(0x7c8065);
+  mountainGraphics.fillTriangle(0, 120, 120, 0, 240, 120);
+
+  mountainGraphics.fillStyle(0x5f6f45);
+  mountainGraphics.fillTriangle(50, 120, 150, 25, 250, 120);
+
+  mountainGraphics.fillStyle(0xf3ead8);
+  mountainGraphics.fillTriangle(95, 25, 120, 0, 145, 25);
+  mountainGraphics.fillTriangle(130, 45, 150, 25, 170, 45);
+
+  mountainGraphics.generateTexture("pixel-mountain", 260, 120);
+  mountainGraphics.destroy();
+}
+
+function createWoodSignTexture(scene: PhaserType.Scene) {
+  const signGraphics = scene.make.graphics({ x: 0, y: 0 }, false);
+
+  signGraphics.fillStyle(0x6f4e37);
+  signGraphics.fillRect(8, 0, 80, 36);
+
+  signGraphics.fillStyle(0x8a6346);
+  signGraphics.fillRect(12, 5, 72, 8);
+
+  signGraphics.fillStyle(0x4b3425);
+  signGraphics.fillRect(42, 36, 12, 42);
+
+  signGraphics.lineStyle(2, 0x171717);
+  signGraphics.strokeRect(8, 0, 80, 36);
+  signGraphics.strokeRect(42, 36, 12, 42);
+
+  signGraphics.generateTexture("wood-sign", 96, 80);
+  signGraphics.destroy();
 }

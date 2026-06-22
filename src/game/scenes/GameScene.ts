@@ -8,6 +8,9 @@ export function createGameScene(Phaser: typeof import("phaser")) {
     private cursors?: PhaserType.Types.Input.Keyboard.CursorKeys;
     private keys?: Record<string, PhaserType.Input.Keyboard.Key>;
 
+    private readonly worldWidth = 3600;
+    private readonly worldHeight = 720;
+
     constructor() {
       super("GameScene");
     }
@@ -18,6 +21,7 @@ export function createGameScene(Phaser: typeof import("phaser")) {
       this.createWorld();
       this.createPlayer();
       this.createControls();
+      this.configureCamera();
     }
 
     update() {
@@ -40,7 +44,7 @@ export function createGameScene(Phaser: typeof import("phaser")) {
       const isRunning = this.keys.shift.isDown;
 
       const walkSpeed = 190;
-      const runSpeed = 290;
+      const runSpeed = 310;
       const speed = isRunning ? runSpeed : walkSpeed;
 
       if (movingLeft) {
@@ -54,20 +58,76 @@ export function createGameScene(Phaser: typeof import("phaser")) {
       }
 
       if (wantsToJump && isTouchingGround) {
-        this.player.setVelocityY(-500);
+        this.player.setVelocityY(-520);
       }
     }
 
     private createWorld() {
-      const width = this.scale.width;
-      const height = this.scale.height;
+      const screenHeight = this.scale.height;
 
+      this.physics.world.setBounds(0, 0, this.worldWidth, this.worldHeight);
+      this.cameras.main.setBounds(0, 0, this.worldWidth, this.worldHeight);
       this.cameras.main.setBackgroundColor("#8fb3d9");
 
+      this.createBackground(screenHeight);
+      this.createLevelText();
+      this.createPlatforms(screenHeight);
+      this.createSigns(screenHeight);
+    }
+
+    private createBackground(screenHeight: number) {
       this.add
-        .text(width / 2, 70, "Portfólio Lucas Dias", {
+        .rectangle(
+          this.worldWidth / 2,
+          this.worldHeight / 2,
+          this.worldWidth,
+          this.worldHeight,
+          0x8fb3d9
+        )
+        .setOrigin(0.5);
+
+      this.add
+        .rectangle(
+          this.worldWidth / 2,
+          this.worldHeight - 90,
+          this.worldWidth,
+          180,
+          0xd8c7a5
+        )
+        .setOrigin(0.5);
+
+      for (let x = 140; x < this.worldWidth; x += 520) {
+        this.add
+          .image(x, 130, "pixel-cloud")
+          .setOrigin(0.5)
+          .setScrollFactor(0.35);
+      }
+
+      for (let x = 80; x < this.worldWidth; x += 320) {
+        this.add
+          .image(x, screenHeight - 170, "pixel-mountain")
+          .setOrigin(0.5, 1)
+          .setScrollFactor(0.55);
+      }
+
+      for (let x = 0; x < this.worldWidth; x += 220) {
+        this.add
+          .rectangle(x, screenHeight - 96, 110, 42, 0x7c8065)
+          .setOrigin(0, 1)
+          .setScrollFactor(0.75);
+
+        this.add
+          .rectangle(x + 70, screenHeight - 96, 90, 58, 0x5f6f45)
+          .setOrigin(0, 1)
+          .setScrollFactor(0.75);
+      }
+    }
+
+    private createLevelText() {
+      this.add
+        .text(110, 70, "Portfólio Lucas Dias", {
           fontFamily: "monospace",
-          fontSize: "34px",
+          fontSize: "32px",
           color: "#f3ead8",
           backgroundColor: "#171717",
           padding: {
@@ -75,43 +135,46 @@ export function createGameScene(Phaser: typeof import("phaser")) {
             y: 12,
           },
         })
-        .setOrigin(0.5);
+        .setScrollFactor(1);
 
       this.add
-        .text(width / 2, 125, "Etapa 4: código organizado", {
+        .text(112, 132, "Etapa 5: mundo side-scroller", {
           fontFamily: "monospace",
           fontSize: "18px",
           color: "#171717",
         })
-        .setOrigin(0.5);
+        .setScrollFactor(1);
 
       this.add
-        .text(
-          width / 2,
-          165,
-          "A/D ou setas: andar  |  Shift: correr  |  Espaço/W: pular",
-          {
-            fontFamily: "monospace",
-            fontSize: "16px",
-            color: "#171717",
-          }
-        )
-        .setOrigin(0.5);
+        .text(112, 165, "A/D ou setas: andar | Shift: correr | Espaço/W: pular", {
+          fontFamily: "monospace",
+          fontSize: "16px",
+          color: "#171717",
+        })
+        .setScrollFactor(1);
+    }
 
+    private createPlatforms(screenHeight: number) {
       this.platforms = this.physics.add.staticGroup();
 
-      const groundY = height - 32;
+      const groundY = screenHeight - 32;
 
-      for (let x = 16; x < width; x += 32) {
+      for (let x = 16; x < this.worldWidth; x += 32) {
         const tile = this.platforms
           .create(x, groundY, "ground-tile")
-          .setOrigin(0.5, 0.5);
+          .setOrigin(0.5, 0.5) as PhaserType.Physics.Arcade.Sprite;
 
         tile.refreshBody();
       }
 
-      this.createPlatform(width * 0.38, height - 160, 5);
-      this.createPlatform(width * 0.68, height - 250, 4);
+      this.createPlatform(420, screenHeight - 155, 5);
+      this.createPlatform(760, screenHeight - 240, 4);
+      this.createPlatform(1120, screenHeight - 165, 6);
+      this.createPlatform(1510, screenHeight - 255, 5);
+      this.createPlatform(1910, screenHeight - 185, 4);
+      this.createPlatform(2320, screenHeight - 270, 6);
+      this.createPlatform(2820, screenHeight - 190, 5);
+      this.createPlatform(3220, screenHeight - 255, 4);
     }
 
     private createPlatform(x: number, y: number, blocks: number) {
@@ -124,10 +187,52 @@ export function createGameScene(Phaser: typeof import("phaser")) {
       for (let index = 0; index < blocks; index++) {
         const tile = this.platforms
           .create(startX + index * 32, y, "stone-platform")
-          .setOrigin(0.5, 0.5);
+          .setOrigin(0.5, 0.5) as PhaserType.Physics.Arcade.Sprite;
 
         tile.refreshBody();
       }
+    }
+
+    private createSigns(screenHeight: number) {
+      const signPositions = [
+        {
+          x: 260,
+          title: "Início da jornada",
+        },
+        {
+          x: 1050,
+          title: "Área de Stacks",
+        },
+        {
+          x: 1850,
+          title: "Projetos",
+        },
+        {
+          x: 2850,
+          title: "Skills",
+        },
+        {
+          x: 3400,
+          title: "Final",
+        },
+      ];
+
+      signPositions.forEach((sign) => {
+        this.add.image(sign.x, screenHeight - 102, "wood-sign").setOrigin(0.5, 1);
+
+        this.add
+          .text(sign.x, screenHeight - 177, sign.title, {
+            fontFamily: "monospace",
+            fontSize: "14px",
+            color: "#171717",
+            backgroundColor: "#f3ead8",
+            padding: {
+              x: 8,
+              y: 5,
+            },
+          })
+          .setOrigin(0.5);
+      });
     }
 
     private createPlayer() {
@@ -135,20 +240,34 @@ export function createGameScene(Phaser: typeof import("phaser")) {
         return;
       }
 
-      const height = this.scale.height;
+      const screenHeight = this.scale.height;
 
-      this.player = this.physics.add.sprite(120, height - 120, "lucas-player");
+      this.player = this.physics.add.sprite(
+        120,
+        screenHeight - 120,
+        "lucas-player"
+      );
 
       this.player.setCollideWorldBounds(true);
       this.player.setBounce(0);
       this.player.setDragX(1200);
-      this.player.setMaxVelocity(320, 700);
+      this.player.setMaxVelocity(340, 760);
 
       const body = this.player.body as PhaserType.Physics.Arcade.Body;
       body.setSize(24, 42);
       body.setOffset(6, 4);
 
       this.physics.add.collider(this.player, this.platforms);
+    }
+
+    private configureCamera() {
+      if (!this.player) {
+        return;
+      }
+
+      this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
+      this.cameras.main.setDeadzone(160, 90);
+      this.cameras.main.setZoom(1);
     }
 
     private createControls() {
